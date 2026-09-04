@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+```
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SENTRA - Live Detection</title>
+
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+
+        margin: 0;
+        padding: 40px;
+
+        min-height: 100vh;
+
+        background-color: #111827;
+        color: white;
+
+        transition: background-color 0.2s;
+    }
+
+
+    h1 {
+        font-size: 48px;
+        margin-bottom: 5px;
+    }
+
+
+    h2 {
+        margin-top: 10px;
+    }
+
+
+    button {
+        padding: 15px 25px;
+        margin: 10px;
+
+        font-size: 18px;
+
+        border: none;
+        border-radius: 8px;
+
+        cursor: pointer;
+    }
+
+
+    #startButton {
+        background-color: #22c55e;
+        color: white;
+    }
+
+
+    #stopButton {
+        background-color: #ef4444;
+        color: white;
+    }
+
+
+    button:disabled {
+        background-color: #6b7280;
+        cursor: not-allowed;
+    }
+
+
+    #status {
+        margin-top: 30px;
+        font-size: 22px;
+    }
+
+
+    /* ==========================================
+       RESULT CARD
+    ========================================== */
+
+    #result {
+        margin: 30px auto;
+
+        padding: 35px;
+
+        max-width: 650px;
+
+        border-radius: 20px;
+
+        background-color: #1f2937;
+
+        transition: all 0.2s;
+
+        box-shadow:
+            0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+
+    #result h2 {
+        font-size: 35px;
+    }
+
+
+    #result p {
+        font-size: 20px;
+    }
+
+
+    /* ==========================================
+       NORMAL
+    ========================================== */
+
+    .normal {
+        background-color: #16a34a !important;
+        color: white;
+
+        box-shadow:
+            0 0 30px rgba(34, 197, 94, 0.7);
+    }
+
+
+    /* ==========================================
+       GUNSHOT
+    ========================================== */
+
+    .gunshot {
+        background-color: #dc2626 !important;
+        color: white;
+
+        box-shadow:
+            0 0 40px rgba(255, 0, 0, 0.9);
+    }
+
+
+    /* ==========================================
+       DRONE
+    ========================================== */
+
+    .drone {
+        background-color: #f97316 !important;
+        color: white;
+
+        box-shadow:
+            0 0 40px rgba(255, 140, 0, 0.9);
+    }
+
+
+    /* ==========================================
+       PROCESSING
+    ========================================== */
+
+    .processing {
+        background-color: #374151 !important;
+        color: white;
+    }
+
+
+    /* ==========================================
+       FULL PAGE RED BLINK
+    ========================================== */
+
+    body.threat-red {
+        animation: redThreat 0.7s infinite;
+    }
+
+
+    @keyframes redThreat {
+
+        0% {
+            background-color: #111827;
+        }
+
+        50% {
+            background-color: #dc2626;
+        }
+
+        100% {
+            background-color: #111827;
+        }
+
+    }
+
+
+    /* ==========================================
+       FULL PAGE ORANGE BLINK
+    ========================================== */
+
+    body.threat-orange {
+        animation: orangeThreat 0.9s infinite;
+    }
+
+
+    @keyframes orangeThreat {
+
+        0% {
+            background-color: #111827;
+        }
+
+        50% {
+            background-color: #f97316;
+        }
+
+        100% {
+            background-color: #111827;
+        }
+
+    }
+
+
+    /* ==========================================
+       FULL PAGE GREEN
+    ========================================== */
+
+    body.threat-green {
+        animation: none;
+        background-color: #166534;
+    }
+
+
+    /* ==========================================
+       THREAT LEVEL
+    ========================================== */
+
+    #threatLevel {
+        margin: 20px auto;
+
+        padding: 12px 25px;
+
+        max-width: 400px;
+
+        border-radius: 30px;
+
+        font-size: 22px;
+        font-weight: bold;
+
+        background-color: #374151;
+    }
+
+
+    .high {
+        background-color: #dc2626 !important;
+
+        box-shadow:
+            0 0 25px rgba(255, 0, 0, 0.8);
+    }
+
+
+    .medium {
+        background-color: #f97316 !important;
+
+        box-shadow:
+            0 0 25px rgba(255, 140, 0, 0.8);
+    }
+
+
+    .zero {
+        background-color: #16a34a !important;
+
+        box-shadow:
+            0 0 25px rgba(0, 255, 80, 0.7);
+    }
+
+
+    .unknown {
+        background-color: #374151 !important;
+    }
+
+
+    /* ==========================================
+       HOLD TIMER
+    ========================================== */
+
+    #holdTimer {
+        font-size: 18px;
+        margin-top: 10px;
+        min-height: 25px;
+    }
+
+</style>
+```
+
+</head>
+
+<body>
+
+```
+<h1>🎧 SENTRA</h1>
+
+<h2>Live Audio Detection</h2>
+
+
+<button id="startButton" type="button">
+    🎙️ Start Detection
+</button>
+
+
+<button id="stopButton" type="button" disabled>
+    ⏹️ Stop Detection
+</button>
+
+
+<h3 id="status">
+    Status: Ready
+</h3>
+
+
+<div id="threatLevel" class="unknown">
+    THREAT LEVEL: UNKNOWN
+</div>
+
+
+<div id="holdTimer">
+</div>
+
+
+<div id="result" class="processing">
+
+    <h2>No Detection Yet</h2>
+
+    <p>
+        Press "Start Detection" to begin.
+    </p>
+
+</div>
+
+
+<script>
+
+
+    /* ==========================================
+       SETTINGS
+    ========================================== */
+
+    const CHUNK_TIME = 2000;
+
+    const THREAT_HOLD_TIME = 10000;
+
+
+    /* ==========================================
+       VARIABLES
+    ========================================== */
+
+    let mediaStream = null;
+
+    let mediaRecorder = null;
+
+    let detecting = false;
+
+    let activeThreat = null;
+
+    let lastThreatTime = 0;
+
+    let holdTimerInterval = null;
+
+
+    /* ==========================================
+       HTML ELEMENTS
+    ========================================== */
+
+    const startButton =
+        document.getElementById("startButton");
+
+
+    const stopButton =
+        document.getElementById("stopButton");
+
+
+    const status =
+        document.getElementById("status");
+
+
+    const result =
+        document.getElementById("result");
+
+
+    const threatLevel =
+        document.getElementById("threatLevel");
+
+
+    const holdTimer =
+        document.getElementById("holdTimer");
+
+
+    console.log(
+        "SENTRA Live Detection loaded"
+    );
+
+
+    /* ==========================================
+       BUTTON EVENTS
+    ========================================== */
+
+    startButton.addEventListener(
+        "click",
+        startLiveDetection
+    );
+
+
+    stopButton.addEventListener(
+        "click",
+        stopLiveDetection
+    );
+
+
+    /* ==========================================
+       RESET THREAT SCREEN
+    ========================================== */
+
+    function resetThreat() {
+
+        document.body.classList.remove(
+            "threat-red",
+            "threat-orange",
+            "threat-green"
+        );
+
+
+        threatLevel.className =
+            "unknown";
+
+
+        threatLevel.innerText =
+            "THREAT LEVEL: UNKNOWN";
+
+
+        holdTimer.innerText = "";
+
+
+        if (holdTimerInterval) {
+
+            clearInterval(
+                holdTimerInterval
+            );
+
+            holdTimerInterval = null;
+
+        }
+
+    }
+
+
+    /* ==========================================
+       START HOLD TIMER DISPLAY
+    ========================================== */
+
+    function startHoldTimer() {
+
+        if (holdTimerInterval) {
+
+            clearInterval(
+                holdTimerInterval
+            );
+
+        }
+
+
+        holdTimerInterval =
+            setInterval(
+                function() {
+
+                    const elapsed =
+                        Date.now() -
+                        lastThreatTime;
+
+
+                    const remaining =
+                        Math.ceil(
+                            (
+                                THREAT_HOLD_TIME -
+                                elapsed
+                            ) / 1000
+                        );
+
+
+                    if (remaining > 0) {
+
+                        holdTimer.innerText =
+                            "⚠️ Threat warning active: " +
+                            remaining +
+                            " seconds remaining";
+
+                    }
+
+                    else {
+
+                        holdTimer.innerText =
+                            "Monitoring for normal audio...";
+
+
+                        clearInterval(
+                            holdTimerInterval
+                        );
+
+
+                        holdTimerInterval =
+                            null;
+
+                    }
+
+                },
+
+                250
+            );
+
+    }
+
+
+    /* ==========================================
+       START LIVE DETECTION
+    ========================================== */
+
+    async function startLiveDetection() {
+
+
+        console.log(
+            "Starting live detection..."
+        );
+
+
+        activeThreat = null;
+
+        lastThreatTime = 0;
+
+
+        resetThreat();
+
+
+        status.innerText =
+            "Status: Requesting microphone...";
+
+
+        result.className =
+            "processing";
+
+
+        result.innerHTML = `
+
+            <h2>🎙️ Listening...</h2>
+
+            <p>
+                SENTRA is continuously analyzing audio.
+            </p>
+
+        `;
+
+
+        try {
+
+
+            mediaStream =
+                await navigator.mediaDevices.getUserMedia({
+
+                    audio: {
+
+                        echoCancellation: false,
+
+                        noiseSuppression: false,
+
+                        autoGainControl: false
+
+                    }
+
+                });
+
+
+            detecting = true;
+
+
+            startButton.disabled = true;
+
+            stopButton.disabled = false;
+
+
+            status.innerText =
+                "Status: 🔴 LIVE DETECTION";
+
+
+            recordChunk();
+
+
+        }
+
+
+        catch(error) {
+
+
+            console.error(
+                "Microphone error:",
+                error
+            );
+
+
+            detecting = false;
+
+
+            status.innerText =
+                "Status: Microphone Error";
+
+
+            result.className =
+                "processing";
+
+
+            result.innerHTML = `
+
+                <h2>❌ Microphone Error</h2>
+
+                <p>
+                    ${error.name}: ${error.message}
+                </p>
+
+            `;
+
+        }
+
+    }
+
+
+    /* ==========================================
+       RECORD ONE 2-SECOND CHUNK
+    ========================================== */
+
+    function recordChunk() {
+
+
+        if (!detecting) {
+
+            return;
+
+        }
+
+
+        console.log(
+            "Recording new audio chunk..."
+        );
+
+
+        mediaRecorder =
+            new MediaRecorder(
+                mediaStream
+            );
+
+
+        let chunks = [];
+
+
+        mediaRecorder.ondataavailable =
+            function(event) {
+
+                if (event.data.size > 0) {
+
+                    chunks.push(
+                        event.data
+                    );
+
+                }
+
+            };
+
+
+        mediaRecorder.onstop =
+            async function() {
+
+
+                if (chunks.length === 0) {
+
+                    if (detecting) {
+
+                        recordChunk();
+
+                    }
+
+                    return;
+
+                }
+
+
+                const audioBlob =
+                    new Blob(
+                        chunks,
+                        {
+                            type:
+                                mediaRecorder.mimeType
+                        }
+                    );
+
+
+                console.log(
+                    "Audio chunk size:",
+                    audioBlob.size
+                );
+
+
+                await sendAudioChunk(
+                    audioBlob
+                );
+
+
+                if (detecting) {
+
+                    recordChunk();
+
+                }
+
+            };
+
+
+        mediaRecorder.start();
+
+
+        setTimeout(
+            function() {
+
+
+                if (
+                    detecting &&
+                    mediaRecorder &&
+                    mediaRecorder.state !== "inactive"
+                ) {
+
+                    mediaRecorder.stop();
+
+                }
+
+
+            },
+
+            CHUNK_TIME
+        );
+
+    }
+
+
+    /* ==========================================
+       SEND AUDIO CHUNK TO FLASK
+    ========================================== */
+
+    async function sendAudioChunk(
+        audioBlob
+    ) {
+
+
+        if (!detecting) {
+
+            return;
+
+        }
+
+
+        status.innerText =
+            "Status: 🔴 Analyzing live audio...";
+
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+
+            "audio",
+
+            audioBlob,
+
+            "live_audio.webm"
+
+        );
+
+
+        try {
+
+
+            const response =
+                await fetch(
+
+                    "/live-detect",
+
+                    {
+
+                        method: "POST",
+
+                        body: formData
+
+                    }
+
+                );
+
+
+            const data =
+                await response.json();
+
+
+            console.log(
+                "Flask response:",
+                data
+            );
+
+
+            if (data.error) {
+
+
+                console.error(
+                    "Server error:",
+                    data.error
+                );
+
+
+                status.innerText =
+                    "Status: Server Error";
+
+
+                return;
+
+            }
+
+
+            const prediction =
+                data.result.toLowerCase();
+
+
+            const confidence =
+                data.confidence;
+
+
+            const currentTime =
+                Date.now();
+
+
+            console.log(
+                "LIVE PREDICTION:",
+                prediction,
+                confidence
+            );
+
+
+            /* ==================================
+               GUNSHOT
+            ================================== */
+
+            if (
+                prediction === "gunshot"
+            ) {
+
+
+                activeThreat =
+                    "gunshot";
+
+
+                lastThreatTime =
+                    currentTime;
+
+
+                document.body.classList.remove(
+                    "threat-orange",
+                    "threat-green"
+                );
+
+
+                document.body.classList.add(
+                    "threat-red"
+                );
+
+
+                threatLevel.className =
+                    "high";
+
+
+                threatLevel.innerText =
+                    "🔴 HIGH THREAT";
+
+
+                result.className =
+                    "gunshot";
+
+
+                result.innerHTML = `
+
+                    <h2>
+                        🚨 GUNSHOT DETECTED
+                    </h2>
+
+                    <p>
+                        Confidence:
+                        <strong>
+                            ${confidence}%
+                        </strong>
+                    </p>
+
+                    <p>
+                        Threat Level:
+                        <strong>
+                            HIGH
+                        </strong>
+                    </p>
+
+                    <p>
+                        Warning remains active
+                        for 10 seconds.
+                    </p>
+
+                `;
+
+
+                startHoldTimer();
+
+
+            }
+
+
+            /* ==================================
+               DRONE
+            ================================== */
+
+            else if (
+                prediction === "drone"
+            ) {
+
+
+                activeThreat =
+                    "drone";
+
+
+                lastThreatTime =
+                    currentTime;
+
+
+                document.body.classList.remove(
+                    "threat-red",
+                    "threat-green"
+                );
+
+
+                document.body.classList.add(
+                    "threat-orange"
+                );
+
+
+                threatLevel.className =
+                    "medium";
+
+
+                threatLevel.innerText =
+                    "🟠 MEDIUM THREAT";
+
+
+                result.className =
+                    "drone";
+
+
+                result.innerHTML = `
+
+                    <h2>
+                        ⚠️ DRONE DETECTED
+                    </h2>
+
+                    <p>
+                        Confidence:
+                        <strong>
+                            ${confidence}%
+                        </strong>
+                    </p>
+
+                    <p>
+                        Threat Level:
+                        <strong>
+                            MEDIUM
+                        </strong>
+                    </p>
+
+                    <p>
+                        Warning remains active
+                        for 10 seconds.
+                    </p>
+
+                `;
+
+
+                startHoldTimer();
+
+
+            }
+
+
+            /* ==================================
+               NORMAL
+            ================================== */
+
+            else {
+
+
+                const timeSinceThreat =
+                    currentTime -
+                    lastThreatTime;
+
+
+                if (
+                    activeThreat !== null &&
+                    timeSinceThreat < THREAT_HOLD_TIME
+                ) {
+
+
+                    const remaining =
+                        Math.ceil(
+                            (
+                                THREAT_HOLD_TIME -
+                                timeSinceThreat
+                            ) / 1000
+                        );
+
+
+                    console.log(
+                        "Threat hold active:",
+                        activeThreat,
+                        remaining,
+                        "seconds remaining"
+                    );
+
+
+                    status.innerText =
+                        "Status: ⚠️ Threat warning active";
+
+
+                    return;
+
+                }
+
+
+                activeThreat =
+                    null;
+
+
+                lastThreatTime =
+                    0;
+
+
+                if (holdTimerInterval) {
+
+
+                    clearInterval(
+                        holdTimerInterval
+                    );
+
+
+                    holdTimerInterval =
+                        null;
+
+                }
+
+
+                holdTimer.innerText =
+                    "";
+
+
+                document.body.classList.remove(
+                    "threat-red",
+                    "threat-orange"
+                );
+
+
+                document.body.classList.add(
+                    "threat-green"
+                );
+
+
+                threatLevel.className =
+                    "zero";
+
+
+                threatLevel.innerText =
+                    "🟢 NO THREAT";
+
+
+                result.className =
+                    "normal";
+
+
+                result.innerHTML = `
+
+                    <h2>
+                        🟢 NORMAL SOUND
+                    </h2>
+
+                    <p>
+                        Confidence:
+                        <strong>
+                            ${confidence}%
+                        </strong>
+                    </p>
+
+                    <p>
+                        Threat Level:
+                        <strong>
+                            0 — NO THREAT
+                        </strong>
+                    </p>
+
+                    <p>
+                        Environment is currently safe.
+                    </p>
+
+                `;
+
+            }
+
+
+            if (detecting) {
+
+
+                if (activeThreat !== null) {
+
+
+                    status.innerText =
+                        "Status: ⚠️ LIVE THREAT MONITORING";
+
+                }
+
+
+                else {
+
+
+                    status.innerText =
+                        "Status: 🟢 LIVE DETECTION";
+
+                }
+
+            }
+
+
+        }
+
+
+        catch(error) {
+
+
+            console.error(
+                "Live detection error:",
+                error
+            );
+
+
+            if (detecting) {
+
+
+                status.innerText =
+                    "Status: Connection Error";
+
+            }
+
+        }
+
+    }
+
+
+    /* ==========================================
+       STOP LIVE DETECTION
+    ========================================== */
+
+    function stopLiveDetection() {
+
+
+        console.log(
+            "Stopping live detection..."
+        );
+
+
+        detecting = false;
+
+
+        activeThreat = null;
+
+
+        lastThreatTime = 0;
+
+
+        if (
+            holdTimerInterval
+        ) {
+
+
+            clearInterval(
+                holdTimerInterval
+            );
+
+
+            holdTimerInterval =
+                null;
+
+        }
+
+
+        holdTimer.innerText =
+            "";
+
+
+        if (
+            mediaRecorder &&
+            mediaRecorder.state !== "inactive"
+        ) {
+
+
+            mediaRecorder.stop();
+
+        }
+
+
+        if (mediaStream) {
+
+
+            mediaStream
+                .getTracks()
+                .forEach(
+                    function(track) {
+
+                        track.stop();
+
+                    }
+                );
+
+        }
+
+
+        mediaRecorder =
+            null;
+
+
+        mediaStream =
+            null;
+
+
+        startButton.disabled =
+            false;
+
+
+        stopButton.disabled =
+            true;
+
+
+        resetThreat();
+
+
+        status.innerText =
+            "Status: Detection Stopped";
+
+
+        result.className =
+            "processing";
+
+
+        result.innerHTML = `
+
+            <h2>
+                ⏹️ Detection Stopped
+            </h2>
+
+            <p>
+                Press Start Detection
+                to begin again.
+            </p>
+
+        `;
+
+    }
+
+
+</script>
+```
+
+</body>
+
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>SENTRA - Acoustic Threat Sentinel</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: white;
+            min-height: 100vh;
+        }
+
+
+        /* HEADER */
+
+        header {
+            background: #111827;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+        }
+
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+
+        .system-status {
+            padding: 10px 16px;
+            border-radius: 20px;
+            background: #064e3b;
+            color: #6ee7b7;
+            font-size: 14px;
+        }
+
+
+        /* MAIN */
+
+        main {
+            padding: 40px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+
+        .welcome {
+            margin-bottom: 35px;
+        }
+
+
+        .welcome h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+
+        .welcome p {
+            color: #94a3b8;
+            font-size: 17px;
+        }
+
+
+        /* CARDS */
+
+        .cards {
+            display: grid;
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 25px;
+        }
+
+
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 15px;
+            padding: 30px;
+            min-height: 230px;
+            transition: 0.2s;
+        }
+
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #64748b;
+        }
+
+
+        .icon {
+            font-size: 42px;
+            margin-bottom: 18px;
+        }
+
+
+        .card h2 {
+            margin-bottom: 12px;
+        }
+
+
+        .card p {
+            color: #94a3b8;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+
+        /* BUTTONS */
+
+        .button {
+            display: inline-block;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+
+        .button:hover {
+            background: #1d4ed8;
+        }
+
+
+        /* THREAT ANALYSIS */
+
+        .analysis {
+            margin-top: 35px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 15px;
+            padding: 30px;
+        }
+
+
+        .analysis h2 {
+            margin-bottom: 15px;
+        }
+
+
+        .analysis p {
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+
+        /* FOOTER */
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #64748b;
+            margin-top: 30px;
+        }
+
+
+        /* MOBILE */
+
+        @media (max-width: 800px) {
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+
+            header {
+                padding: 20px;
+            }
+
+
+            main {
+                padding: 25px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- HEADER -->
+
+    <header>
+
+        <div>
+
+            <div class="logo">
+                🛡️ SENTRA
+            </div>
+
+            <div class="subtitle">
+                Acoustic Threat Sentinel
+            </div>
+
+        </div>
+
+
+        <div class="system-status">
+            ● SYSTEM ONLINE
+        </div>
+
+    </header>
+
+
+
+    <!-- MAIN CONTENT -->
+
+    <main>
+
+
+        <section class="welcome">
+
+            <h1>
+                Acoustic Threat Detection
+            </h1>
+
+            <p>
+                Detect and classify environmental sounds
+                using the SENTRA AI model.
+            </p>
+
+        </section>
+
+
+
+        <!-- DETECTION CARDS -->
+
+        <section class="cards">
+
+
+            <!-- AUDIO DETECTION -->
+
+            <div class="card">
+
+                <div class="icon">
+                    🎵
+                </div>
+
+                <h2>
+                    Audio Detection
+                </h2>
+
+                <p>
+                    Upload a WAV audio file and let
+                    SENTRA classify the sound as
+                    gunshot, drone, or normal.
+                </p>
+
+                <a
+                    href="/upload"
+                    class="button"
+                >
+                    Upload Audio
+                </a>
+
+            </div>
+
+
+
+            <!-- LIVE DETECTION -->
+
+            <div class="card">
+
+                <div class="icon">
+                    🎙️
+                </div>
+
+                <h2>
+                    Live Detection
+                </h2>
+
+                <p>
+                    Use your computer microphone
+                    to record and analyze sounds
+                    in real time.
+                </p>
+
+                <!-- IMPORTANT:
+                     This MUST point to Flask /live -->
+
+                <a
+                    href="/live"
+                    class="button"
+                >
+                    Start Detection
+                </a>
+
+            </div>
+
+
+
+            <!-- THREAT ANALYSIS -->
+
+            <div class="card">
+
+                <div class="icon">
+                    ⚠️
+                </div>
+
+                <h2>
+                    Threat Analysis
+                </h2>
+
+                <p>
+                    Analyze detected sounds and
+                    determine the corresponding
+                    threat level.
+                </p>
+
+                <a
+                    href="/threat"
+                    class="button"
+                >
+                    View Analysis
+                </a>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- SYSTEM INFORMATION -->
+
+        <section class="analysis">
+
+            <h2>
+                SENTRA Detection System
+            </h2>
+
+            <p>
+                SENTRA uses machine learning and
+                MFCC audio features to classify
+                acoustic events into three categories:
+                gunshot, drone, and normal.
+            </p>
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        SENTRA • Acoustic Threat Sentinel
+
+    </footer>
+
+
+</body>
+
+</html>

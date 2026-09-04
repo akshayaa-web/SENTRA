@@ -1,0 +1,30 @@
+# Virtual environment
+myenv/
+venv/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Dataset
+dataset/
+
+# Uploaded audio
+uploads/*
+!uploads/.gitkeep
+
+# Audio files
+*.wav
+*.mp3
+*.webm
+
+# Generated feature files
+features.npy
+labels.npy
+
+# Environment/secrets
+.env
+
+# VS Code
+.vscode/

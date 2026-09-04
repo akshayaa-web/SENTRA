@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>SENTRA - Detection History</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: white;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #111827;
+            padding: 20px 40px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            margin-top: 5px;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: auto;
+            padding: 40px;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .description {
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+
+        .panel {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 15px;
+            padding: 25px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px;
+            border-bottom: 2px solid #475569;
+            color: #cbd5e1;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .gunshot {
+            color: #f87171;
+            font-weight: bold;
+        }
+
+        .drone {
+            color: #fbbf24;
+            font-weight: bold;
+        }
+
+        .normal {
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .empty {
+            text-align: center;
+            color: #94a3b8;
+            padding: 40px;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 20px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .back:hover {
+            background: #1d4ed8;
+        }
+
+        @media (max-width: 700px) {
+
+            main {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        🛡️ SENTRA
+    </div>
+
+    <div class="subtitle">
+        Acoustic Threat Sentinel
+    </div>
+
+</header>
+
+
+<main>
+
+    <h1>
+        Detection History
+    </h1>
+
+    <p class="description">
+        Previous acoustic detections recorded by SENTRA.
+    </p>
+
+
+    <div class="panel">
+
+        {% if history %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Time
+                    </th>
+
+                    <th>
+                        Sound
+                    </th>
+
+                    <th>
+                        Confidence
+                    </th>
+
+                    <th>
+                        Threat Level
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for item in history %}
+
+                <tr>
+
+                    <td>
+                        {{ item.time }}
+                    </td>
+
+
+                    <td>
+
+                        {% if item.result == "gunshot" %}
+
+                            <span class="gunshot">
+                                🔫 GUNSHOT
+                            </span>
+
+                        {% elif item.result == "drone" %}
+
+                            <span class="drone">
+                                🚁 DRONE
+                            </span>
+
+                        {% else %}
+
+                            <span class="normal">
+                                🔊 NORMAL
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+                        {{ item.confidence }}%
+                    </td>
+
+
+                    <td>
+                        {{ item.threat_level }}
+                    </td>
+
+
+                    <td>
+                        {{ item.status }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+
+        {% else %}
+
+        <div class="empty">
+
+            No detections recorded yet.
+
+            <br><br>
+
+            Start an audio or live detection
+            to create history.
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <a
+        href="/"
+        class="back"
+    >
+        ← Back to Dashboard
+    </a>
+
+</main>
+
+
+</body>
+
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>SENTRA - Audio Detection</title>
+
+</head>
+
+
+<body>
+
+    <h1>SENTRA</h1>
+
+    <h2>Audio Detection</h2>
+
+    <p>
+        Upload an audio file to detect
+        Gunshot, Drone, or Normal sound.
+    </p>
+
+
+    <form action="{{ url_for('upload') }}"
+          method="POST"
+          enctype="multipart/form-data">
+
+
+        <label for="audio">
+            Select Audio File:
+        </label>
+
+
+        <br><br>
+
+
+        <input
+            type="file"
+            id="audio"
+            name="audio"
+            accept=".wav,audio/wav"
+            required
+        >
+
+
+        <br><br>
+
+
+        <button type="submit">
+            Analyze Audio
+        </button>
+
+
+    </form>
+
+</body>
+
+</html>
